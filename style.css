@@ -1,1 +1,104 @@
+body {
+  padding: 0;
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+  background: var(--lightBlue);
+  display: grid;
+  justify-items: center;
+  height: 100vh;
+}
 
+:root {
+  --white: #ffffff;
+  --darkBlue: #00246b;
+  --lightBlue: #cadcfc;
+}
+
+.player-info {
+  display: grid;
+  font-weight: bold;
+  border: 2px solid var(--darkBlue);
+  border-radius: 10px;
+  background: var(--white);
+  width: 300px;
+  height: 400px;
+  padding-top: 20px;
+  grid-template-rows: repeat(5, 1fr);
+  align-items: center;
+  justify-items: center;
+}
+
+button {
+  background: var(--lightBlue);
+  border: 2px solid var(--darkBlue);
+  color: var(--darkBlue);
+  font-weight: bold;
+}
+.play-btn {
+  border-radius: 8px;
+  width: 100px;
+  height: 40px;
+  font-size: 1.5em;
+}
+.sChange {
+  width: 25px;
+  height: 25px;
+  font-size: 1em;
+  border-radius: 5px;
+}
+
+.play-btn:hover,
+.sChange:hover {
+  background: var(--darkBlue);
+  border: 2px solid var(--lightBlue);
+  color: var(--lightBlue);
+}
+.play-btn:active,
+.sChange:active {
+  transform: scale(0.9);
+}
+
+label {
+  font-size: 1.1em;
+}
+
+input {
+  font-size: 1em;
+  background: var(--lightBlue);
+  border: 2px solid var(--darkBlue);
+}
+.board-structure {
+  border: 2px solid var(--darkBlue);
+  padding: 30px;
+  margin-bottom: 10px;
+}
+.tic-tac-toe {
+  display: grid;
+  width: 430px;
+  height: 430px;
+  gap: 10px;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+}
+.tic-tac-toe > button {
+  background: var(--darkBlue);
+  border-radius: 10px;
+  color: var(--white);
+  font-size: 5em;
+  font-weight: 500;
+}
+.player-scores {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  font-weight: bold;
+}
+
+.player-scores > div {
+  border: 3px solid var(--darkBlue);
+  width: 150px;
+  padding: 7px;
+  margin: 0 0 20px;
+}
+
+dialog {
+}

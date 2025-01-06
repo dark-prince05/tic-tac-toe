@@ -31,22 +31,26 @@
       </div>
       <div>
         <span>Player One:</span>
-        <button class="sChange">X</button>
-      </div>
-      <div>
+        <button class="sChange p1-symbol">X</button>
         <span>Player Two:</span>
-        <button class="sChange">O</button>
+        <button class="sChange p2-symbol">O</button>
       </div>
       <button class="play-btn">Play!</button>
-
-      <div class="p1Score"></div>
-      <div class="p2Score"></div>
-      <dialog>
+    </div>
+    <div class="board-structure">
+      <div class="player-scores">
+        <div class="p1Score">Player One:</div>
+        <div class="p2Score">Player Two:</div>
+      </div>
+      <div class="tic-tac-toe"></div>
+    </div>
+    <dialog>
+      <div class="dialog-box">
         <div class="announcement"></div>
         <button>New Game</button>
         <button>Play Again</button>
-      </dialog>
-    </div>
+      </div>
+    </dialog>
 
     <script src="script.js"></script>
   </body>
