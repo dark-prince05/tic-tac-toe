@@ -7,48 +7,54 @@
     <link href="style.css" rel="stylesheet" />
   </head>
   <body>
-    <h1>Tic-Tac-Toe</h1>
-    <div class="player-info">
-      <div>
-        <label for="playerOneName">Player one:</label>
-        <br />
-        <input
-          id="p1"
-          type="text"
-          name="playerOneName"
-          placeholder="Player One"
-        />
+    <div class="body">
+      <h1>Tic-Tac-Toe</h1>
+      <form id="form">
+        <div class="player-info">
+          <div>
+            <label for="playerOneName">Player one:</label>
+            <br />
+            <input
+              id="p1"
+              type="text"
+              name="playerOneName"
+              placeholder="Player One"
+            />
+          </div>
+          <div>
+            <label for="playerTwoName">Player two:</label>
+            <br />
+            <input
+              id="p2"
+              type="text"
+              name="playerTwoName"
+              placeholder="Player Two"
+            />
+          </div>
+          <div>
+            <span>Player One:</span>
+            <button class="sChange p1-symbol" type="button">X</button>
+            <span>Player Two:</span>
+            <button class="sChange p2-symbol" type="button">O</button>
+          </div>
+          <button class="play-btn" type="button">Play!</button>
+        </div>
+      </form>
+      <div class="board-structure">
+        <div class="player-scores">
+          <div class="p1Score">Player One: <span>0</span></div>
+          <div class="p2Score">Player Two: <span>0</span></div>
+        </div>
+        <div class="tic-tac-toe"></div>
       </div>
-      <div>
-        <label for="playerTwoName">Player two:</label>
-        <br />
-        <input
-          id="p2"
-          type="text"
-          name="playerTwoName"
-          placeholder="Player Two"
-        />
-      </div>
-      <div>
-        <span>Player One:</span>
-        <button class="sChange p1-symbol">X</button>
-        <span>Player Two:</span>
-        <button class="sChange p2-symbol">O</button>
-      </div>
-      <button class="play-btn">Play!</button>
-    </div>
-    <div class="board-structure">
-      <div class="player-scores">
-        <div class="p1Score">Player One:</div>
-        <div class="p2Score">Player Two:</div>
-      </div>
-      <div class="tic-tac-toe"></div>
     </div>
     <dialog>
       <div class="dialog-box">
-        <div class="announcement"></div>
-        <button>New Game</button>
-        <button>Play Again</button>
+        <div class="announcement">sdfad</div>
+        <div class="dialog-btns">
+          <button class="new-game">New Game</button>
+          <button class="play-again">Play Again</button>
+        </div>
       </div>
     </dialog>
 

@@ -3,11 +3,12 @@ body {
   margin: 0;
   font-family: "Roboto", sans-serif;
   background: var(--lightBlue);
-  display: grid;
-  justify-items: center;
   height: 100vh;
 }
-
+.body {
+  display: grid;
+  justify-items: center;
+}
 :root {
   --white: #ffffff;
   --darkBlue: #00246b;
@@ -48,9 +49,9 @@ button {
 }
 
 .play-btn:hover,
-.sChange:hover {
+.sChange:hover,
+.dialog-btns > button:hover {
   background: var(--darkBlue);
-  border: 2px solid var(--lightBlue);
   color: var(--lightBlue);
 }
 .play-btn:active,
@@ -99,6 +100,36 @@ input {
   padding: 7px;
   margin: 0 0 20px;
 }
+dialog::backdrop {
+  backdrop-filter: blur(5px);
+}
 
 dialog {
+  width: 400px;
+  height: 200px;
+}
+.announcement {
+  text-align: center;
+  color: var(--darkBlue);
+  font-size: 2em;
+  font-weight: bold;
+}
+.dialog-box {
+  display: grid;
+  height: 100%;
+  justify-items: center;
+  align-items: center;
+}
+.dialog-btns > button {
+  font-size: 1em;
+  height: 40px;
+  margin: 0 10px;
+  width: 100px;
+  border-radius: 6px;
+}
+.dialog-btns {
+  align-self: start;
+}
+.dialog-btns > button:active {
+  transform: scale(0.9);
 }

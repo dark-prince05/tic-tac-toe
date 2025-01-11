@@ -12,11 +12,6 @@ const gameBoard = function () {
 
   const getBoard = () => board;
 
-  const printBoard = () => {
-    const s = board.map((row) => row.map((column) => column.getSymbol()));
-    console.log(s);
-  };
-
   const placeSymbol = (row, column, player) => {
     if (board[row][column].getSymbol() === " ") {
       board[row][column].putSymbol(player.symbol);
@@ -42,23 +37,44 @@ const gameBoard = function () {
       ) {
         return true;
       }
-      if (
-        (board[0][0].getSymbol() === player.symbol &&
-          board[1][1].getSymbol() === player.symbol &&
-          board[2][2].getSymbol() === player.symbol) ||
-        (board[0][2].getSymbol() === player.symbol &&
-          board[1][1].getSymbol() === player.symbol &&
-          board[2][0].getSymbol() === player.symbol)
-      ) {
-        return true;
+    }
+
+    return (
+      (board[0][0].getSymbol() === player.symbol &&
+        board[1][1].getSymbol() === player.symbol &&
+        board[2][2].getSymbol() === player.symbol) ||
+      (board[0][2].getSymbol() === player.symbol &&
+        board[1][1].getSymbol() === player.symbol &&
+        board[2][0].getSymbol() === player.symbol)
+    );
+  };
+  const checkDraw = () => {
+    let draw = false;
+    let arr = [];
+    board.map((row) => row.map((col) => arr.push(col.getSymbol())));
+    for (const v of arr) {
+      if (v !== " ") {
+        draw = true;
+      } else {
+        draw = false;
+        break;
       }
     }
+    return draw;
+  };
+  const clearBoard = () => {
+    board.forEach((row) => {
+      row.forEach((col) => {
+        col.putSymbol(" ");
+      });
+    });
   };
   return {
     getBoard,
     checkWinner,
+    checkDraw,
     placeSymbol,
-    printBoard,
+    clearBoard,
   };
 };
 
@@ -77,44 +93,67 @@ function cell() {
   };
 }
 
-function gameController(
-  playerOneName = "Player One",
-  playerOneSymbol = "X",
-  playerTwoName = "Player Two",
-  playerTwoSymbol = "O",
-) {
+function gameController() {
   const board = gameBoard();
   const players = [
-    { name: playerOneName, symbol: playerOneSymbol },
-    { name: playerTwoName, symbol: playerTwoSymbol },
+    { name: "Player One", symbol: "X", score: 0 },
+    { name: "Player Two", symbol: "O", score: 0 },
   ];
-  let win = false;
+
+  const updatePlayers = (
+    newPlayerOneName,
+    newPlayerOneSymbol,
+    newPlayerTwoName,
+    newPlayerTwoSymbol,
+  ) => {
+    players[0].name = newPlayerOneName;
+    players[0].symbol = newPlayerOneSymbol;
+    players[1].name = newPlayerTwoName;
+    players[1].symbol = newPlayerTwoSymbol;
+    activePlayer = players[0].symbol === "X" ? players[0] : players[1];
+  };
   let activePlayer = players[0].symbol === "X" ? players[0] : players[1];
   const switchPlayer = () => {
     activePlayer = activePlayer === players[0] ? players[1] : players[0];
   };
 
+  let win = false;
   let winner = "";
   const playRound = (row, column) => {
     if (!win) {
       if (board.placeSymbol(row, column, activePlayer)) {
-        board.printBoard();
         if (board.checkWinner(activePlayer)) {
-          console.log(activePlayer.name);
           winner = activePlayer.name;
           win = true;
+          activePlayer.score++;
         }
         switchPlayer();
       }
     }
+    if (!win && board.checkDraw()) {
+      winner = "Draw";
+    }
+  };
+  const reset = () => {
+    winner = "";
+    activePlayer = players[0].symbol === "X" ? players[0] : players[1];
+    win = false;
+  };
+  const resetScore = () => {
+    players[0].score = 0;
+    players[1].score = 0;
   };
   return {
     playRound,
     switchPlayer,
+    updatePlayers,
     getActivePlayer: () => activePlayer,
+    players: () => players,
     getBoard: board.getBoard,
     getWinner: () => winner,
-    getWin: () => win,
+    reset,
+    resetScore,
+    clearBoard: () => board.clearBoard(),
   };
 }
 
@@ -125,25 +164,19 @@ const getInfo = (function () {
   const p2Symbol = document.querySelector(".p2-symbol");
 
   return {
-    p1Name: () => p1Input.value,
-    p2Name: () => p2Input.value,
+    p1Name: () => (p1Input.value === "" ? "Player One" : p1Input.value),
+    p2Name: () => (p2Input.value === "" ? "Player Two" : p2Input.value),
     p1Symbol: () => p1Symbol.textContent,
     p2Symbol: () => p2Symbol.textContent,
   };
 })();
 
 function userInterface() {
-  const game = gameController(
-    getInfo.p1Name(),
-    getInfo.p1Symbol(),
-    getInfo.p2Name(),
-    getInfo.p2Symbol(),
-  );
-
+  let game = gameController();
   const ticTacToe = document.querySelector(".tic-tac-toe");
+  const board = game.getBoard();
   const updateBoard = () => {
     ticTacToe.textContent = "";
-    const board = game.getBoard();
     board.forEach((row, rI) => {
       row.forEach((col, cI) => {
         const box = document.createElement("button");
@@ -154,11 +187,16 @@ function userInterface() {
     });
   };
 
+  const form = document.querySelector("form");
+  const dialog = document.querySelector("dialog");
   const winnerAnnouncement = () => {
-    const dialog = document.querySelector("dialog");
     const announcement = document.querySelector(".announcement");
-    if (game.getWin()) {
-      announcement.textContent = `The Winner is ${game.getWinner()}`;
+    if (game.getWinner() !== "") {
+      announcement.textContent = `${game.getWinner()} wins!`;
+      dialog.showModal();
+    }
+    if (game.getWinner() === "Draw") {
+      announcement.textContent = `Draw!`;
       dialog.showModal();
     }
   };
@@ -167,9 +205,13 @@ function userInterface() {
     const p1Score = document.querySelector(".p1Score");
     const p2Score = document.querySelector(".p2Score");
     p1Score.textContent =
-      getInfo.p1Symbol() === "X" ? getInfo.p1Name() : getInfo.p2Name();
+      getInfo.p1Symbol() === "X"
+        ? `${getInfo.p1Name()}: ${game.players()[0].score}`
+        : `${getInfo.p2Name()}: ${game.players()[1].score}`;
     p2Score.textContent =
-      getInfo.p2Symbol() === "O" ? getInfo.p2Name() : getInfo.p1Name();
+      getInfo.p2Symbol() === "O"
+        ? `${getInfo.p2Name()}: ${game.players()[1].score}`
+        : `${getInfo.p1Name()}: ${game.players()[0].score}`;
     if (game.getActivePlayer().name == getInfo.p1Name()) {
       p2Score.style.background = "";
       p2Score.style.color = "";
@@ -183,15 +225,27 @@ function userInterface() {
     }
   };
 
+  const body = document.querySelector(".body");
+  const boardStructure = document.querySelector(".board-structure");
+  const playerInfo = document.querySelector("form");
+  const playBtn = document.querySelector(".play-btn");
   const playMatch = () => {
-    const body = document.querySelector("body");
-    const boardStructure = document.querySelector(".board-structure");
-    const playerInfo = document.querySelector(".player-info");
-    const playBtn = document.querySelector(".play-btn");
-    body.removeChild(boardStructure);
+    if (body.contains(boardStructure)) {
+      body.removeChild(boardStructure);
+    }
     playBtn.addEventListener("click", () => {
-      body.removeChild(playerInfo);
-      body.append(boardStructure);
+      game.updatePlayers(
+        getInfo.p1Name(),
+        getInfo.p1Symbol(),
+        getInfo.p2Name(),
+        getInfo.p2Symbol(),
+      );
+      if (body.contains(playerInfo)) {
+        body.removeChild(playerInfo);
+      }
+      if (!body.contains(boardStructure)) {
+        body.appendChild(boardStructure);
+      }
       updateBoard();
       updatePlayerTurn();
     });
@@ -203,11 +257,45 @@ function userInterface() {
       updateBoard();
       updatePlayerTurn();
       winnerAnnouncement();
+      newGame();
+      playAgain();
+    });
+  };
+  const playAgain = () => {
+    const playAgainBtn = document.querySelector(".play-again");
+    playAgainBtn.addEventListener("click", () => {
+      game.clearBoard();
+      dialog.close();
+      updateBoard();
+      game.reset();
+      updatePlayerTurn();
+    });
+  };
+  const newGame = () => {
+    const newGameBtn = document.querySelector(".new-game");
+    newGameBtn.addEventListener("click", () => {
+      dialog.close();
+      form.reset();
+      if (!body.contains(playerInfo)) {
+        body.appendChild(playerInfo);
+      }
+      if (body.contains(boardStructure)) {
+        body.removeChild(boardStructure);
+      }
+      game.updatePlayers(
+        getInfo.p1Name(),
+        getInfo.p1Symbol(),
+        getInfo.p2Name(),
+        getInfo.p2Symbol(),
+      );
+      userInterface();
+      game.clearBoard();
+      game.reset();
+      game.resetScore();
     });
   };
   return {
     playMatch,
-    updateBoard,
   };
 }
 const ui = userInterface();
@@ -221,4 +309,7 @@ changeSymbol.forEach((btn) => {
     changeSymbol[1].textContent =
       changeSymbol[1].textContent === "O" ? "X" : "O";
   });
+});
+window.addEventListener("load", () => {
+  form.reset();
 });
