@@ -1,3 +1,4 @@
+
 const gameBoard = function () {
   const row = 3;
   const column = 3;
@@ -48,20 +49,16 @@ const gameBoard = function () {
         board[2][0].getSymbol() === player.symbol)
     );
   };
+
   const checkDraw = () => {
-    let draw = false;
     let arr = [];
-    board.map((row) => row.map((col) => arr.push(col.getSymbol())));
+    board.forEach((row) => row.forEach((col) => arr.push(col.getSymbol())));
     for (const v of arr) {
-      if (v !== " ") {
-        draw = true;
-      } else {
-        draw = false;
-        break;
-      }
+      if (v === " ") return false;
     }
-    return draw;
+    return true;
   };
+
   const clearBoard = () => {
     board.forEach((row) => {
       row.forEach((col) => {
@@ -69,6 +66,7 @@ const gameBoard = function () {
       });
     });
   };
+
   return {
     getBoard,
     checkWinner,
@@ -104,7 +102,7 @@ function gameController() {
     newPlayerOneName,
     newPlayerOneSymbol,
     newPlayerTwoName,
-    newPlayerTwoSymbol,
+    newPlayerTwoSymbol
   ) => {
     players[0].name = newPlayerOneName;
     players[0].symbol = newPlayerOneSymbol;
@@ -112,37 +110,41 @@ function gameController() {
     players[1].symbol = newPlayerTwoSymbol;
     activePlayer = players[0].symbol === "X" ? players[0] : players[1];
   };
+
   let activePlayer = players[0].symbol === "X" ? players[0] : players[1];
+
   const switchPlayer = () => {
     activePlayer = activePlayer === players[0] ? players[1] : players[0];
   };
 
   let win = false;
   let winner = "";
+
   const playRound = (row, column) => {
-    if (!win) {
-      if (board.placeSymbol(row, column, activePlayer)) {
-        if (board.checkWinner(activePlayer)) {
-          winner = activePlayer.name;
-          win = true;
-          activePlayer.score++;
-        }
+    if (!win && board.placeSymbol(row, column, activePlayer)) {
+      if (board.checkWinner(activePlayer)) {
+        winner = activePlayer.name;
+        win = true;
+        activePlayer.score++;
+      } else if (board.checkDraw()) {
+        winner = "Draw";
+      } else {
         switchPlayer();
       }
     }
-    if (!win && board.checkDraw()) {
-      winner = "Draw";
-    }
   };
+
   const reset = () => {
     winner = "";
     activePlayer = players[0].symbol === "X" ? players[0] : players[1];
     win = false;
   };
+
   const resetScore = () => {
     players[0].score = 0;
     players[1].score = 0;
   };
+
   return {
     playRound,
     switchPlayer,
@@ -175,6 +177,7 @@ function userInterface() {
   let game = gameController();
   const ticTacToe = document.querySelector(".tic-tac-toe");
   const board = game.getBoard();
+
   const updateBoard = () => {
     ticTacToe.textContent = "";
     board.forEach((row, rI) => {
@@ -189,6 +192,7 @@ function userInterface() {
 
   const form = document.querySelector("form");
   const dialog = document.querySelector("dialog");
+
   const winnerAnnouncement = () => {
     const announcement = document.querySelector(".announcement");
     if (game.getWinner() !== "") {
@@ -196,7 +200,7 @@ function userInterface() {
       dialog.showModal();
     }
     if (game.getWinner() === "Draw") {
-      announcement.textContent = `Draw!`;
+      announcement.textContent = ` It's a Draw!`;
       dialog.showModal();
     }
   };
@@ -229,6 +233,7 @@ function userInterface() {
   const boardStructure = document.querySelector(".board-structure");
   const playerInfo = document.querySelector("form");
   const playBtn = document.querySelector(".play-btn");
+
   const playMatch = () => {
     if (body.contains(boardStructure)) {
       body.removeChild(boardStructure);
@@ -238,7 +243,7 @@ function userInterface() {
         getInfo.p1Name(),
         getInfo.p1Symbol(),
         getInfo.p2Name(),
-        getInfo.p2Symbol(),
+        getInfo.p2Symbol()
       );
       if (body.contains(playerInfo)) {
         body.removeChild(playerInfo);
@@ -261,6 +266,7 @@ function userInterface() {
       playAgain();
     });
   };
+
   const playAgain = () => {
     const playAgainBtn = document.querySelector(".play-again");
     playAgainBtn.addEventListener("click", () => {
@@ -271,6 +277,7 @@ function userInterface() {
       updatePlayerTurn();
     });
   };
+
   const newGame = () => {
     const newGameBtn = document.querySelector(".new-game");
     newGameBtn.addEventListener("click", () => {
@@ -286,7 +293,7 @@ function userInterface() {
         getInfo.p1Name(),
         getInfo.p1Symbol(),
         getInfo.p2Name(),
-        getInfo.p2Symbol(),
+        getInfo.p2Symbol()
       );
       userInterface();
       game.clearBoard();
@@ -294,10 +301,12 @@ function userInterface() {
       game.resetScore();
     });
   };
+
   return {
     playMatch,
   };
 }
+
 const ui = userInterface();
 ui.playMatch();
 
@@ -310,6 +319,8 @@ changeSymbol.forEach((btn) => {
       changeSymbol[1].textContent === "O" ? "X" : "O";
   });
 });
+
 window.addEventListener("load", () => {
   form.reset();
 });
+
