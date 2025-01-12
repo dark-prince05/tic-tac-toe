@@ -1,4 +1,3 @@
-
 const gameBoard = function () {
   const row = 3;
   const column = 3;
@@ -102,7 +101,7 @@ function gameController() {
     newPlayerOneName,
     newPlayerOneSymbol,
     newPlayerTwoName,
-    newPlayerTwoSymbol
+    newPlayerTwoSymbol,
   ) => {
     players[0].name = newPlayerOneName;
     players[0].symbol = newPlayerOneSymbol;
@@ -176,16 +175,30 @@ const getInfo = (function () {
 function userInterface() {
   let game = gameController();
   const ticTacToe = document.querySelector(".tic-tac-toe");
+  const boardBoxes = document.querySelectorAll(".boxes");
   const board = game.getBoard();
+  boardBoxes.forEach((box, index) => {
+    // Calculate row and col based on the flat index
+    const row = Math.floor(index / board.length); // Determine the row index
+    const col = index % board.length; // Determine the column index
+
+    box.addEventListener("mouseover", () => {
+      if (box.textContent === " " && board[row][col].getSymbol() === " ") {
+        box.textContent = game.getActivePlayer().symbol;
+      }
+    });
+    box.addEventListener("mouseout", () => {
+      if (board[row][col].getSymbol() === " ") {
+        box.textContent = " ";
+      }
+    });
+  });
 
   const updateBoard = () => {
-    ticTacToe.textContent = "";
     board.forEach((row, rI) => {
       row.forEach((col, cI) => {
-        const box = document.createElement("button");
-        box.classList.add(`row${rI}`, `col${cI}`);
-        box.textContent = col.getSymbol();
-        ticTacToe.append(box);
+        document.querySelector(`.row${rI}.col${cI}`).textContent =
+          col.getSymbol();
       });
     });
   };
@@ -243,7 +256,7 @@ function userInterface() {
         getInfo.p1Name(),
         getInfo.p1Symbol(),
         getInfo.p2Name(),
-        getInfo.p2Symbol()
+        getInfo.p2Symbol(),
       );
       if (body.contains(playerInfo)) {
         body.removeChild(playerInfo);
@@ -293,7 +306,7 @@ function userInterface() {
         getInfo.p1Name(),
         getInfo.p1Symbol(),
         getInfo.p2Name(),
-        getInfo.p2Symbol()
+        getInfo.p2Symbol(),
       );
       userInterface();
       game.clearBoard();
@@ -323,4 +336,3 @@ changeSymbol.forEach((btn) => {
 window.addEventListener("load", () => {
   form.reset();
 });
-
